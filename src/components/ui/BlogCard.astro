@@ -1,0 +1,253 @@
+---
+// src/components/ui/BlogCard.astro
+// "手作り感とポップさ" design — masking tape + neon fluorescent marker aesthetic
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  slug: string;
+  /** 0-based index used for rotation / tape-color variation */
+  index?: number;
+}
+
+const { title, description, pubDate, tags, slug, index = 0 } = Astro.props;
+
+// Per-card visual personality
+const rotations   = ['-2.8deg', '1.6deg', '-1.4deg', '2.2deg', '-0.8deg'];
+const tapeColors  = ['var(--color-primary)', 'var(--color-secondary)', 'var(--color-accent)'];
+const tapeAngles  = ['-3deg', '2deg', '-1.5deg'];
+const shadowColors= ['var(--color-secondary)', 'var(--color-accent)', 'var(--color-primary)'];
+
+const rotation   = rotations[index % rotations.length];
+const tapeColor  = tapeColors[index % tapeColors.length];
+const tapeAngle  = tapeAngles[index % tapeAngles.length];
+const shadowClr  = shadowColors[index % shadowColors.length];
+
+// Format date: "2024.08.15"
+const dateStr = pubDate.toLocaleDateString('ja-JP', {
+  year:  'numeric',
+  month: '2-digit',
+  day:   '2-digit',
+}).replace(/\//g, '.');
+---
+
+<article
+  class="blogCard"
+  data-blog-item
+  style={`--card-rotate:${rotation}; --tape-color:${tapeColor}; --tape-angle:${tapeAngle}; --shadow-color:${shadowClr};`}
+>
+  <!-- Masking-tape strip -->
+  <span class="tape" aria-hidden="true"></span>
+
+  <div class="cardInner">
+
+    <!-- Meta row: date + primary tag -->
+    <div class="cardMeta">
+      <time class="cardDate" datetime={pubDate.toISOString()}>{dateStr}</time>
+      {tags[0] && <span class="primaryTag">{tags[0]}</span>}
+    </div>
+
+    <!-- Title with ink-highlight on hover -->
+    <h3 class="cardTitle" data-link-group>
+      <a class="cardLink" href={`/blog/${slug}`} data-ink-link>
+        {title}
+      </a>
+      <span class="inkHighlight" data-ink-highlight aria-hidden="true"></span>
+    </h3>
+
+    <!-- Description -->
+    <p class="cardDesc">{description}</p>
+
+    <!-- Footer: tag pills + read prompt -->
+    <div class="cardFooter">
+      <ul class="tagList">
+        {tags.map((tag) => <li class="tag">{tag}</li>)}
+      </ul>
+      <span class="readMore">READ&nbsp;→</span>
+    </div>
+
+  </div>
+</article>
+
+<style>
+  /* ── Card shell ─────────────────────────────────────────────── */
+  .blogCard {
+    position: relative;
+    /* Margin-top gives room for the tape strip */
+    margin-top: 1.4rem;
+    transform: rotate(var(--card-rotate, 0deg));
+    transform-origin: center bottom;
+    transition: transform 0.25s var(--ease-elastic), box-shadow 0.25s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .blogCard:hover {
+    transform: rotate(calc(var(--card-rotate, 0deg) * 0.2)) translateY(-6px);
+    box-shadow: 10px 10px 0 var(--shadow-color, var(--color-secondary));
+  }
+
+  /* ── Masking-tape strip ──────────────────────────────────────── */
+  .tape {
+    display: block;
+    position: absolute;
+    top: -12px;
+    left: 28px;
+    width: 72px;
+    height: 22px;
+    background: var(--tape-color, var(--color-primary));
+    opacity: 0.7;
+    transform: rotate(var(--tape-angle, -2deg));
+    z-index: 2;
+    /* Tape texture: subtle horizontal stripes */
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 4px,
+      rgba(255,255,255,0.1) 4px,
+      rgba(255,255,255,0.1) 5px
+    );
+  }
+
+  /* ── Inner card surface ─────────────────────────────────────── */
+  .cardInner {
+    background: #0c1829;
+    border: 2px solid rgba(248, 250, 252, 0.1);
+    box-shadow: 6px 6px 0 var(--shadow-color, var(--color-secondary));
+    padding: 1.6rem 1.6rem 1.4rem;
+    position: relative;
+    /* Torn-paper feel: slight inner glow from the tape color */
+    background-image: radial-gradient(
+      ellipse at top left,
+      rgba(var(--tape-color, 204, 255, 0), 0.04) 0%,
+      transparent 60%
+    );
+  }
+
+  /* Neon corner dot */
+  .cardInner::after {
+    content: '';
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tape-color, var(--color-primary));
+    opacity: 0.6;
+  }
+
+  /* ── Meta row ───────────────────────────────────────────────── */
+  .cardMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .cardDate {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--color-text);
+    opacity: 0.4;
+  }
+
+  .primaryTag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tape-color, var(--color-primary));
+    border: 1px solid currentColor;
+    padding: 0.1rem 0.45rem;
+    opacity: 0.85;
+  }
+
+  /* ── Title + ink highlight ──────────────────────────────────── */
+  .cardTitle {
+    margin: 0 0 0.9rem;
+    line-height: 1.3;
+    text-transform: none; /* override global h3 uppercase for readability */
+    letter-spacing: -0.01em;
+  }
+
+  .cardLink {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    display: block;
+  }
+
+  /* The neon underline drawn by GSAP on hover */
+  .inkHighlight {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: var(--tape-color, var(--color-primary));
+    margin-top: 5px;
+    /* GSAP sets scaleX: 0 and animates to 1 */
+    will-change: transform;
+  }
+
+  /* ── Description ────────────────────────────────────────────── */
+  .cardDesc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    opacity: 0.6;
+    margin: 0 0 1.2rem;
+    /* Two-line clamp for tidy display */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Card footer ─────────────────────────────────────────────── */
+  .cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tagList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    opacity: 0.65;
+    padding: 0.1rem 0;
+  }
+
+  .tag::before { content: '#'; opacity: 0.5; }
+
+  .readMore {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--tape-color, var(--color-primary));
+    white-space: nowrap;
+    opacity: 0.9;
+    transition: letter-spacing 0.2s ease;
+  }
+
+  .blogCard:hover .readMore {
+    letter-spacing: 0.2em;
+  }
+</style>

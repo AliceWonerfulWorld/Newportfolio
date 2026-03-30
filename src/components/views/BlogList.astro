@@ -1,0 +1,198 @@
+---
+// src/components/views/BlogList.astro
+import { getCollection } from 'astro:content';
+import BlogCard from '../ui/BlogCard.astro';
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3); // Show latest 3
+---
+
+<section class="blogSection" id="blog">
+
+  <!-- ── Section header ─────────────────────────────────────── -->
+  <div class="blogHeader">
+    <p class="headerEyebrow">&gt; 04_DEV_LOGS</p>
+
+    <div class="headerTitleRow">
+      <h2 class="headerTitle">
+        <span class="titleMain">DEV</span>
+        <span class="titleSub">LOGS.</span>
+      </h2>
+      <!-- Decorative large numeral -->
+      <span class="headerNumeral" aria-hidden="true">04</span>
+    </div>
+
+    <p class="headerMeta">
+      最新 <strong class="metaCount">{posts.length}</strong> 件 &nbsp;/&nbsp;
+      <a class="headerAllLink" href="/blog">全記事を見る &rarr;</a>
+    </p>
+  </div>
+
+  <!-- ── Card list ───────────────────────────────────────────── -->
+  <ul class="blogList" id="blog-list">
+    {posts.map((post, i) => (
+      <li class="blogListItem">
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          tags={post.data.tags}
+          slug={post.id}
+          index={i}
+        />
+      </li>
+    ))}
+  </ul>
+
+  <!-- Decorative background accent -->
+  <span class="bgAccent" aria-hidden="true">WRITE</span>
+
+</section>
+
+<script>
+  import { animateBlogItems, initInkHighlight } from '../../utils/animations';
+
+  const section = document.getElementById('blog');
+  const list    = document.getElementById('blog-list');
+
+  if (list)    animateBlogItems(list);
+  if (section) initInkHighlight(section);
+</script>
+
+<style>
+  /* ── Section shell ──────────────────────────────────────────── */
+  .blogSection {
+    position: relative;
+    padding: 10vh 5vw 12vh;
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  /* ── Background decorative word ────────────────────────────── */
+  .bgAccent {
+    position: absolute;
+    bottom: -2vh;
+    right: -2vw;
+    font-size: clamp(5rem, 20vw, 14rem);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    color: rgba(204, 255, 0, 0.03);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* ── Section header ─────────────────────────────────────────── */
+  .blogHeader {
+    margin-bottom: 5rem;
+  }
+
+  .headerEyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    color: var(--color-secondary);
+    letter-spacing: 0.12em;
+    margin: 0 0 0.75rem;
+    opacity: 0.85;
+  }
+
+  .headerTitleRow {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+  }
+
+  .headerTitle {
+    display: flex;
+    flex-direction: column;
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    margin: 0 0 1.2rem;
+    transform: rotate(1.5deg);
+    transform-origin: left top;
+  }
+
+  .titleMain {
+    color: var(--color-text);
+  }
+
+  .titleSub {
+    color: var(--color-secondary);
+    margin-left: 6vw;
+    text-shadow: 4px 4px 0 rgba(255, 0, 122, 0.35);
+  }
+
+  .headerNumeral {
+    font-size: clamp(6rem, 16vw, 12rem);
+    font-weight: 900;
+    color: rgba(255, 0, 122, 0.06);
+    line-height: 1;
+    letter-spacing: -0.06em;
+    pointer-events: none;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .headerMeta {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    opacity: 0.5;
+    margin: 0;
+  }
+
+  .metaCount {
+    color: var(--color-secondary);
+    opacity: 1;
+    font-weight: 700;
+  }
+
+  .headerAllLink {
+    color: var(--color-accent);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: opacity 0.2s ease;
+  }
+
+  .headerAllLink:hover { opacity: 0.7; }
+
+  /* ── Card list ──────────────────────────────────────────────── */
+  .blogList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    /* 3-column at wide, 1-column at narrow */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3rem 2.5rem;
+    align-items: start;
+  }
+
+  .blogListItem {
+    /* Stagger vertical position for asymmetric look */
+  }
+
+  /* nth-child vertical offsets for the "scattered notes on desk" feel */
+  .blogListItem:nth-child(1) { padding-top: 0; }
+  .blogListItem:nth-child(2) { padding-top: 3rem; }
+  .blogListItem:nth-child(3) { padding-top: 1rem; }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .blogList {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .blogListItem:nth-child(n) { padding-top: 0; }
+
+    .headerTitle { transform: none; }
+    .headerNumeral { display: none; }
+  }
+</style>

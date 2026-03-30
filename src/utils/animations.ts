@@ -165,6 +165,96 @@ export function animateProfileSticky(section: Element): void {
   });
 }
 
+/**
+ * Blog items scroll reveal — slides in alternating left/right with rotation.
+ */
+export function animateBlogItems(container: Element): void {
+  const items = container.querySelectorAll('[data-blog-item]');
+  if (!items.length) return;
+
+  if (prefersReducedMotion()) {
+    gsap.set(items, { opacity: 1, clearProps: 'all' });
+    return;
+  }
+
+  items.forEach((item, i) => {
+    gsap.from(item, {
+      x: i % 2 === 0 ? -110 : 110,
+      opacity: 0,
+      rotation: i % 2 === 0 ? -4 : 4,
+      duration: 0.85,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: item,
+        start: 'top 88%',
+        toggleActions: 'play none none none',
+      },
+    });
+  });
+}
+
+/**
+ * Ink highlight hover effect — a neon line sweeps under the title link
+ * from left-to-right on enter, retracts right-to-left on leave.
+ */
+export function initInkHighlight(container: Element): void {
+  if (prefersReducedMotion()) return;
+
+  container.querySelectorAll('[data-link-group]').forEach((group) => {
+    const link      = group.querySelector<HTMLElement>('[data-ink-link]');
+    const highlight = group.querySelector<HTMLElement>('[data-ink-highlight]');
+    if (!link || !highlight) return;
+
+    gsap.set(highlight, { scaleX: 0, transformOrigin: 'left center' });
+
+    link.addEventListener('mouseenter', () => {
+      gsap.killTweensOf(highlight);
+      gsap.set(highlight, { transformOrigin: 'left center' });
+      gsap.to(highlight, { scaleX: 1, duration: 0.32, ease: 'power2.out' });
+    });
+
+    link.addEventListener('mouseleave', () => {
+      gsap.killTweensOf(highlight);
+      gsap.set(highlight, { transformOrigin: 'right center' });
+      gsap.to(highlight, {
+        scaleX: 0,
+        duration: 0.22,
+        ease: 'power2.in',
+        onComplete: () => { gsap.set(highlight, { transformOrigin: 'left center' }); },
+      });
+    });
+  });
+}
+
+/**
+ * Elastic hover for footer social links — "プニッ" bounce on enter/leave.
+ */
+export function initElasticHover(container: Element): void {
+  if (prefersReducedMotion()) return;
+
+  container.querySelectorAll('[data-elastic-link]').forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      gsap.to(el, {
+        y: -10,
+        scale: 1.18,
+        duration: 0.5,
+        ease: 'elastic.out(1, 0.3)',
+        overwrite: true,
+      });
+    });
+
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, {
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        ease: 'elastic.out(1, 0.3)',
+        overwrite: true,
+      });
+    });
+  });
+}
+
 export function animateWorksCards(container: Element): void {
   const cards = container.querySelectorAll('[data-work-card]');
   if (!cards.length) return;

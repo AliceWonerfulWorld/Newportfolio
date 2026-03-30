@@ -1,0 +1,52 @@
+---
+title: "WebARで魔法少女変身体験を作った ── MediaPipe × Three.js の実装メモ"
+description: "スマホブラウザだけでリアルタイムポーズ検出とARエフェクトを重ねるための技術的挑戦と、60fps維持のための最適化戦略。"
+pubDate: 2024-06-01
+tags: ["WebAR", "Three.js", "MediaPipe", "パフォーマンス"]
+---
+
+## 概要
+
+スマートフォンのブラウザを開くだけで魔法少女に変身できる ── それがゴールだった。
+
+インストール不要、アカウント登録不要、カメラを自分に向けるだけ。
+**WebAR + MediaPipe Pose + Three.js** で実現した「変身体験」の実装を記録する。
+
+## アーキテクチャ
+
+```
+Camera Input
+  ↓
+MediaPipe Pose (ポーズ検出: 33 keypoints @ 30fps)
+  ↓
+Costume Renderer (Three.js: 3Dメッシュをkeypoints座標に追従)
+  ↓
+Canvas Composite (カメラ映像 + 3Dオーバーレイ)
+```
+
+## 最大の壁：モバイルGPUの限界
+
+デスクトップでは60fps出ていたものが、iPhoneでは15fpsまで落ちた。
+
+解決策：
+1. **SkinnedMesh → シンプルなGeometryへ**: 骨格アニメーションを廃止し、ひし形パーツの組み合わせに切り替え。ポリゴン数を1/8に削減。
+2. **MediaPipeのモデルをLiteに変更**: 精度を若干犠牲にして推論速度を2倍に。
+3. **requestAnimationFrameの間引き**: ポーズ検出は30fps、レンダリングは60fpsで分離。
+
+```ts
+// 検出フレームを間引く
+let frameCount = 0;
+const onFrame = () => {
+  if (frameCount % 2 === 0) {
+    pose.send({ image: videoEl });
+  }
+  renderer.render(scene, camera);
+  frameCount++;
+  requestAnimationFrame(onFrame);
+};
+```
+
+## 結果
+
+最終的にiPhone 12で**50fps安定**を達成。「変身ポーズ」の検出精度も体感で90%超。
+WebARの可能性と、モバイル最適化の深さを同時に学んだプロジェクトだった。

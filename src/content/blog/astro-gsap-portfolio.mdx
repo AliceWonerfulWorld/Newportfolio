@@ -1,0 +1,46 @@
+---
+title: "Astro v6 + GSAPでポートフォリオを作る理由 ── Tailwindを捨てた話"
+description: "量産型ポートフォリオから脱出するために選んだ技術スタックの理由と、CSS Modulesで表現するネオブルータリズムの実践。"
+pubDate: 2024-10-05
+tags: ["Astro", "GSAP", "CSS", "ポートフォリオ"]
+---
+
+## 「どこかで見たようなポートフォリオ」からの脱出
+
+AIがコードを書く時代、Tailwind + Framer Motionで作られた
+「白背景 / 均等グリッド / 薄いドロップシャドウ」のポートフォリオが溢れている。
+
+そこから逃げるために選んだのが **Astro + GSAP + プレーンCSS** の組み合わせだ。
+
+## なぜAstroか
+
+```
+出力するHTML = ページの重さ = 第一印象の速さ
+```
+
+AstroはデフォルトでJavaScriptをゼロにする。
+必要な箇所だけReactを「島」として配置するアーキテクチャは、
+高パフォーマンスと複雑なインタラクションを両立させる唯一の選択だった。
+
+## なぜGSAPか
+
+CSSアニメーションでは不可能な「インクが弾ける」ような粘り気のある動きは
+GSAPのElastic/Back easingでしか表現できない。
+
+```ts
+gsap.from(chars, {
+  opacity: 0,
+  x: () => gsap.utils.random(-120, 120),
+  rotation: () => gsap.utils.random(-45, 45),
+  ease: 'back.out(1.7)',
+  stagger: { from: 'random', amount: 0.4 }
+});
+```
+
+## なぜTailwindを使わないか
+
+Tailwindは「速く作る」ためのツールだ。しかし「速く作る」と「個性的に作る」は
+しばしば相反する。`bg-blue-500 rounded-lg shadow-sm` では
+Splatoonのインク飛び散りは作れない。
+
+プレーンCSSの自由度こそが、独自の世界観を生む。
