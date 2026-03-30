@@ -1,0 +1,368 @@
+---
+import { getCollection } from 'astro:content';
+
+const allWorks = await getCollection('works');
+const featuredWorks = allWorks
+  .filter((w) => w.data.featured)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+// Link label map
+const linkLabels: Record<string, string> = {
+  github: 'GitHub',
+  demo: 'Demo',
+  article: 'Article',
+  other: 'Link',
+};
+---
+
+<section class="worksSection" id="works">
+  <div class="sectionHeader">
+    <p class="sectionEyebrow">&gt; 03_SELECTED_WORKS</p>
+    <h2 class="sectionTitle">
+      <span class="titleLine">SELECTED</span>
+      <span class="titleLine titleLineAccent">WORKS</span>
+    </h2>
+  </div>
+
+  <div class="worksGrid" id="works-grid">
+    {featuredWorks.map((work) => (
+      <article class="workCard" data-work-card>
+        <div class="cardThumb">
+          <img
+            src={work.data.thumbnail.src}
+            alt={work.data.title}
+            class="thumbImg"
+            loading="lazy"
+          />
+          <div class="thumbOverlay" />
+        </div>
+
+        <div class="cardBody">
+          <h3 class="cardTitle">{work.data.title}</h3>
+          <p class="cardDesc">{work.data.description}</p>
+
+          <ul class="tagList">
+            {work.data.tags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+
+          {work.data.links && work.data.links.length > 0 && (
+            <div class="linkRow">
+              {work.data.links.map((link) => (
+                <a
+                  href={link.url}
+                  class={`workLink workLink--${link.type}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {linkLabels[link.type] ?? link.type}
+                  <span class="linkArrow">↗</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Decorative corner accent -->
+        <span class="cardCorner" aria-hidden="true" />
+      </article>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { animateWorksCards } from '../../utils/animations';
+
+  const grid = document.getElementById('works-grid');
+  if (grid) animateWorksCards(grid);
+</script>
+
+<style>
+  /* ─── Section shell ─────────────────────────────────── */
+  .worksSection {
+    position: relative;
+    padding: 10vh 5vw 14vh;
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  /* Faint diagonal ink stroke behind section */
+  .worksSection::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 55%;
+    height: 140%;
+    background: var(--color-secondary);
+    opacity: 0.04;
+    transform: rotate(-8deg);
+    pointer-events: none;
+  }
+
+  /* ─── Section header ────────────────────────────────── */
+  .sectionHeader {
+    margin-bottom: 6rem;
+    padding-left: 1rem;
+  }
+
+  .sectionEyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    color: var(--color-accent);
+    letter-spacing: 0.12em;
+    margin: 0 0 0.5rem;
+    opacity: 0.8;
+  }
+
+  .sectionTitle {
+    display: flex;
+    flex-direction: column;
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin: 0;
+    transform: rotate(-2deg);
+    transform-origin: left top;
+  }
+
+  .titleLine {
+    color: var(--color-text);
+  }
+
+  .titleLineAccent {
+    color: var(--color-primary);
+    /* Hard neon underline */
+    text-decoration: underline;
+    text-decoration-color: var(--color-secondary);
+    text-decoration-thickness: 6px;
+    text-underline-offset: 6px;
+  }
+
+  /* ─── Cards grid ────────────────────────────────────── */
+  .worksGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  /* ─── Individual card ───────────────────────────────── */
+  .workCard {
+    position: relative;
+    width: clamp(280px, 30vw, 380px);
+    background: #111c35;
+    border: 3px solid var(--card-border, var(--color-primary));
+    box-shadow: 8px 8px 0px var(--card-shadow, var(--color-secondary));
+    transform: rotate(var(--card-rotate, 0deg));
+    transform-origin: center bottom;
+    transition:
+      transform 0.25s var(--ease-elastic),
+      box-shadow 0.25s ease;
+    cursor: default;
+    will-change: transform, box-shadow;
+  }
+
+  /* Per-card personality */
+  .workCard:nth-child(1) {
+    --card-rotate: -3.5deg;
+    --card-border: var(--color-primary);
+    --card-shadow: var(--color-secondary);
+    margin-top: 3.5rem;
+  }
+
+  .workCard:nth-child(2) {
+    --card-rotate: 2deg;
+    --card-border: var(--color-secondary);
+    --card-shadow: var(--color-accent);
+    margin-top: -0.5rem;
+  }
+
+  .workCard:nth-child(3) {
+    --card-rotate: -1.5deg;
+    --card-border: var(--color-accent);
+    --card-shadow: var(--color-primary);
+    margin-top: 5rem;
+  }
+
+  /* Hover: card "stands up" and pops forward */
+  .workCard:hover {
+    transform: rotate(calc(var(--card-rotate) * 0.2)) scale(1.04) translateY(-10px);
+    box-shadow: 14px 14px 0px var(--card-shadow, var(--color-secondary));
+  }
+
+  /* ─── Thumbnail ─────────────────────────────────────── */
+  .cardThumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #0a1020;
+  }
+
+  .thumbImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .workCard:hover .thumbImg {
+    transform: scale(1.06);
+  }
+
+  /* Neon color wash overlay on hover */
+  .thumbOverlay {
+    position: absolute;
+    inset: 0;
+    background: var(--grad-ink);
+    opacity: 0;
+    mix-blend-mode: color;
+    transition: opacity 0.3s ease;
+  }
+
+  .workCard:hover .thumbOverlay {
+    opacity: 0.35;
+  }
+
+  /* ─── Card body ─────────────────────────────────────── */
+  .cardBody {
+    padding: 1.4rem 1.4rem 1.6rem;
+  }
+
+  .cardTitle {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin: 0 0 0.6rem;
+    line-height: 1.1;
+  }
+
+  .cardDesc {
+    font-size: 0.88rem;
+    color: var(--color-text);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin: 0 0 1.1rem;
+  }
+
+  /* ─── Tags ──────────────────────────────────────────── */
+  .tagList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    padding: 0.2rem 0.55rem;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  /* ─── Links ─────────────────────────────────────────── */
+  .linkRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  .workLink {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.35rem 0.8rem;
+    border: 2px solid currentColor;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.2s var(--ease-elastic);
+  }
+
+  .workLink:hover {
+    transform: scale(1.08) translateY(-2px);
+  }
+
+  .workLink--github {
+    color: var(--color-primary);
+  }
+  .workLink--github:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+  }
+
+  .workLink--demo {
+    color: var(--color-secondary);
+  }
+  .workLink--demo:hover {
+    background: var(--color-secondary);
+    color: #fff;
+  }
+
+  .workLink--article,
+  .workLink--other {
+    color: var(--color-accent);
+  }
+  .workLink--article:hover,
+  .workLink--other:hover {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .linkArrow {
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+  }
+
+  .workLink:hover .linkArrow {
+    transform: translate(2px, -2px);
+  }
+
+  /* ─── Decorative corner ─────────────────────────────── */
+  .cardCorner {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 28px;
+    height: 28px;
+    background: var(--card-border, var(--color-primary));
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+  }
+
+  /* ─── Responsive ────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .worksGrid {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .workCard {
+      width: min(90vw, 380px);
+      /* Reduce tilt on mobile for readability */
+      --card-rotate: calc(var(--card-rotate, 0deg) * 0.5) !important;
+      margin-top: 0 !important;
+    }
+
+    .sectionTitle {
+      transform: none;
+    }
+  }
+</style>

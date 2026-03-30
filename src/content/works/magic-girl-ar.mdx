@@ -1,0 +1,34 @@
+---
+title: "魔法少女変身WebAR"
+description: "WebARを使い、カメラ越しにリアルタイムで魔法少女へ「変身」できるハッカソン作品。"
+pubDate: 2024-05-20
+thumbnail: ../../assets/images/magic-girl-ar.svg
+tags: ["WebAR", "Three.js", "React", "Hackathon", "MediaPipe"]
+links:
+  - type: "github"
+    url: "https://github.com/example/magic-girl-ar"
+featured: true
+---
+
+## 魔法少女変身 WebAR
+
+スマートフォンのブラウザからアクセスするだけで、カメラ越しに魔法少女へ変身できるWebARアプリです。
+
+### 体験の流れ
+
+1. スマートフォンでURLにアクセス
+2. カメラを自分に向ける
+3. 変身ポーズを決める → AIがポーズを検出
+4. エフェクトとともに魔法少女コスチュームが重なる
+
+### 技術スタック
+
+- **AR描画**: Three.js + WebXR API
+- **ポーズ検出**: MediaPipe Pose
+- **フロントエンド**: React
+- **エフェクト**: GSAP + CSS Animations
+
+### ハッカソンでの学び
+
+WebARのリアルタイム処理とモバイルのGPU制約の兼ね合いが最大の挑戦でした。
+60fps維持のためにシェーダーの最適化に注力しました。
