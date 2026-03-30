@@ -103,6 +103,68 @@ export function animateSplats(
   return tl;
 }
 
+/**
+ * Profile sticky storytelling — pins each chapter's sticky container
+ * while scrolling through it, and fills the background keyword from
+ * bottom-to-top like ink, using clip-path scrub.
+ */
+export function animateProfileSticky(section: Element): void {
+  if (!section) return;
+
+  if (prefersReducedMotion()) {
+    section.querySelectorAll('[data-keyword-fill]').forEach((el) => {
+      gsap.set(el, { clipPath: 'inset(0% 0 0 0)' });
+    });
+    section.querySelectorAll('[data-profile-text]').forEach((el) => {
+      gsap.set(el, { opacity: 1, y: 0 });
+    });
+    return;
+  }
+
+  section.querySelectorAll('[data-profile-chapter]').forEach((chapter) => {
+    const sticky = chapter.querySelector<HTMLElement>('[data-chapter-sticky]');
+    const fill   = chapter.querySelector('[data-keyword-fill]');
+    const texts  = chapter.querySelectorAll('[data-profile-text]');
+
+    // ── Pin + keyword ink-fill (scrubbed together) ──────────────
+    if (sticky && fill) {
+      gsap.set(fill, { clipPath: 'inset(100% 0 0 0)' });
+
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: sticky,
+          start: 'top top',
+          end: '+=90vh',
+          pin: true,
+          pinSpacing: true,
+          scrub: 1.8,
+          anticipatePin: 1,
+        },
+      }).to(fill, {
+        clipPath: 'inset(0% 0 0 0)',
+        ease: 'none',
+      });
+    }
+
+    // ── Content text entrance (fires once, not scrubbed) ─────────
+    texts.forEach((text, i) => {
+      gsap.from(text, {
+        y: 55,
+        opacity: 0,
+        rotation: (i % 2 === 0 ? -1.5 : 1),
+        duration: 0.75,
+        ease: 'power3.out',
+        delay: i * 0.08,
+        scrollTrigger: {
+          trigger: sticky ?? chapter,
+          start: 'top 78%',
+          toggleActions: 'play none none none',
+        },
+      });
+    });
+  });
+}
+
 export function animateWorksCards(container: Element): void {
   const cards = container.querySelectorAll('[data-work-card]');
   if (!cards.length) return;
