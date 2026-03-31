@@ -1,0 +1,169 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, description, pubDate, updatedDate, heroImage, tags } =
+  entry.data;
+
+const formattedUpdated = updatedDate
+  ? updatedDate.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+---
+
+<PostLayout
+  title={title}
+  description={description}
+  pubDate={pubDate}
+  backHref="/#blog"
+>
+  <div slot="meta" class="blogMeta">
+
+    <!-- Hero image (optional) -->
+    {
+      heroImage && (
+        <div class="heroWrap">
+          <Image
+            src={heroImage}
+            alt={`${title} hero image`}
+            class="heroImage"
+          />
+        </div>
+      )
+    }
+
+    <!-- Tags -->
+    {
+      tags.length > 0 && (
+        <ul class="tagList" aria-label="タグ">
+          {tags.map((tag, i) => (
+            <li class={`tag tag--${i % 2 === 0 ? 'a' : 'b'}`}>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <!-- Updated date -->
+    {
+      formattedUpdated && (
+        <p class="updatedNote">
+          Last updated:&nbsp;
+          <time datetime={updatedDate!.toISOString()}>{formattedUpdated}</time>
+        </p>
+      )
+    }
+  </div>
+
+  <Content />
+</PostLayout>
+
+<style>
+  .blogMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  /* ── Hero image ── */
+  .heroWrap {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+    border: 2px solid rgba(0, 240, 255, 0.2);
+    position: relative;
+  }
+
+  .heroWrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      var(--color-bg) 100%
+    );
+    pointer-events: none;
+  }
+
+  .heroImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.7s var(--ease-elastic);
+  }
+
+  .heroWrap:hover .heroImage {
+    transform: scale(1.03);
+  }
+
+  /* ── Tags ── */
+  .tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    cursor: default;
+    transition:
+      transform 0.2s var(--ease-elastic),
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .tag--a {
+    border: 1.5px solid rgba(204, 255, 0, 0.55);
+    color: var(--color-primary);
+    transform: rotate(-0.8deg);
+  }
+
+  .tag--b {
+    border: 1.5px solid rgba(0, 240, 255, 0.55);
+    color: var(--color-accent);
+    transform: rotate(0.6deg);
+  }
+
+  .tag--a:hover {
+    transform: rotate(0deg) scale(1.1);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg);
+  }
+
+  .tag--b:hover {
+    transform: rotate(0deg) scale(1.1);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  /* ── Updated date ── */
+  .updatedNote {
+    font-size: 0.78rem;
+    color: rgba(248, 250, 252, 0.4);
+    letter-spacing: 0.04em;
+    font-style: italic;
+  }
+</style>

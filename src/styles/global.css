@@ -27,3 +27,37 @@ h1, h2, h3 {
   background-color: var(--color-primary);
   color: var(--color-bg);
 }
+
+/* カスタムカーソル：ネイティブカーソルを非表示 */
+*, *::before, *::after {
+  cursor: none !important;
+}
+a, button {
+  cursor: none !important;
+}
+
+/* ── View Transitions — ink-slide アニメーション ── */
+@keyframes inkPageOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-3vh); }
+}
+
+@keyframes inkPageIn {
+  from { opacity: 0; transform: translateY(4vh); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+::view-transition-old(root) {
+  animation: inkPageOut 0.35s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: inkPageIn 0.45s cubic-bezier(0, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
