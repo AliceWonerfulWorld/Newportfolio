@@ -70,21 +70,14 @@ const formattedDate = pubDate
       </div>
     </article>
 
-    <!-- GSAP CDN -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-      is:inline
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
-      is:inline
-    ></script>
+    <script>
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-    <script is:inline>
-      document.addEventListener('DOMContentLoaded', function () {
-        if (typeof gsap === 'undefined') return;
+      gsap.registerPlugin(ScrollTrigger);
 
-        var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      document.addEventListener('astro:page-load', () => {
+        const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
 
         tl.from('[data-post-title]', {
           opacity: 0,
@@ -134,21 +127,17 @@ const formattedDate = pubDate
           );
 
         // Scroll-triggered animations for prose headings
-        if (typeof ScrollTrigger !== 'undefined') {
-          gsap.registerPlugin(ScrollTrigger);
-          gsap.utils.toArray('.prose h2, .prose h3').forEach(function (el) {
-            gsap.from(el, {
-              scrollTrigger: {
-                trigger: el,
-                start: 'top 88%',
-              },
-              opacity: 0,
-              x: -20,
-              duration: 0.6,
-              ease: 'power3.out',
-            });
+        gsap.utils.toArray<Element>('.prose h2, .prose h3').forEach((el) => {
+          gsap.from(el, {
+            scrollTrigger: { trigger: el, start: 'top 88%' },
+            opacity: 0,
+            x: -20,
+            duration: 0.6,
+            ease: 'power3.out',
           });
-        }
+        });
+
+        ScrollTrigger.refresh();
       });
     </script>
   </body>

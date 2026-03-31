@@ -30,15 +30,15 @@ const { title } = Astro.props;
 			<slot />
 		</main>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" is:inline></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" is:inline></script>
+		<script>
+			import { gsap } from 'gsap';
+			import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-		<!-- View Transitions 時に ScrollTrigger を再初期化 -->
-		<script is:inline>
-			document.addEventListener('astro:after-swap', function () {
-				if (typeof ScrollTrigger !== 'undefined') {
-					ScrollTrigger.refresh();
-				}
+			gsap.registerPlugin(ScrollTrigger);
+
+			// View Transitions 後に ScrollTrigger を再初期化
+			document.addEventListener('astro:page-load', () => {
+				ScrollTrigger.refresh();
 			});
 		</script>
 	</body>
