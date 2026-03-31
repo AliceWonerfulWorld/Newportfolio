@@ -1,0 +1,273 @@
+---
+// src/components/common/Footer.astro
+const year = new Date().getFullYear();
+
+const socials = [
+  {
+    name: 'GitHub',
+    abbr: 'GH',
+    href: 'https://github.com/',
+    color: 'var(--color-primary)',
+  },
+  {
+    name: 'X / Twitter',
+    abbr: 'X',
+    href: 'https://x.com/',
+    color: 'var(--color-accent)',
+  },
+  {
+    name: 'Zenn',
+    abbr: 'Zn',
+    href: 'https://zenn.dev/',
+    color: 'var(--color-secondary)',
+  },
+];
+---
+
+<footer class="siteFooter" id="footer">
+
+  <!-- Neon ink border at the very top -->
+  <div class="footerInkBorder" aria-hidden="true"></div>
+
+  <div class="footerInner">
+
+    <!-- ── Brand column ─────────────────────────────────────── -->
+    <div class="footerBrand">
+      <p class="brandName">DOCTOR<span class="brandDot">.</span></p>
+      <p class="brandTagline">
+        Code with ❤&nbsp;&amp;&nbsp;遊び心
+      </p>
+      <p class="brandStack">
+        Built with&nbsp;
+        <span class="stackBadge">Astro</span>&nbsp;+&nbsp;
+        <span class="stackBadge">GSAP</span>
+      </p>
+    </div>
+
+    <!-- ── Social links ──────────────────────────────────────── -->
+    <nav class="footerNav" aria-label="Social links">
+      <p class="navLabel">&gt; FIND ME</p>
+      <ul class="socialList" id="footer-socials">
+        {socials.map((s) => (
+          <li>
+            <a
+              class="socialLink"
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-elastic-link
+              style={`--link-color: ${s.color}`}
+              aria-label={s.name}
+            >
+              <span class="socialAbbr">{s.abbr}</span>
+              <span class="socialName">{s.name}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- ── Contact nudge ────────────────────────────────────── -->
+    <div class="footerContact">
+      <p class="contactLabel">&gt; SAY HI</p>
+      <a
+        class="contactLink"
+        href="mailto:example@example.com"
+        data-elastic-link
+        style="--link-color: var(--color-primary)"
+      >
+        <span class="socialAbbr">✉</span>
+        <span class="socialName">Mail</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- ── Copyright bar ──────────────────────────────────────── -->
+  <div class="footerCopyright">
+    <span class="copyrightText">
+      © {year}&nbsp;Doctor.&nbsp;All rights reserved.
+    </span>
+    <span class="copyrightStack">
+      Astro&nbsp;v6&nbsp;/&nbsp;GSAP&nbsp;3&nbsp;/&nbsp;100%&nbsp;Tailwind-free
+    </span>
+  </div>
+
+</footer>
+
+<script>
+  import { initElasticHover } from '../../utils/animations';
+
+  const footer = document.getElementById('footer');
+  if (footer) initElasticHover(footer);
+</script>
+
+<style>
+  /* ── Footer shell ───────────────────────────────────────────── */
+  .siteFooter {
+    background: #080f1e; /* slightly darker than bg */
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Ink border ─────────────────────────────────────────────── */
+  .footerInkBorder {
+    height: 4px;
+    background: var(--grad-ink);
+    /* Irregular edge via clip-path for "ink spill" feel */
+    clip-path: polygon(
+      0 0, 8% 100%, 15% 0, 22% 100%, 30% 0,
+      38% 100%, 46% 0, 54% 100%, 62% 0,
+      70% 100%, 78% 0, 86% 100%, 94% 0, 100% 100%,
+      100% 0
+    );
+  }
+
+  /* ── Inner layout ───────────────────────────────────────────── */
+  .footerInner {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 3rem 4rem;
+    padding: 4rem 6vw 2rem;
+    align-items: start;
+  }
+
+  /* ── Brand ──────────────────────────────────────────────────── */
+  .brandName {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    margin: 0 0 0.4rem;
+    line-height: 1;
+  }
+
+  .brandDot { color: var(--color-primary); }
+
+  .brandTagline {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    opacity: 0.5;
+    margin: 0 0 1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .brandStack {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: var(--color-text);
+    opacity: 0.3;
+    margin: 0;
+    letter-spacing: 0.06em;
+  }
+
+  .stackBadge {
+    color: var(--color-accent);
+    opacity: 1;
+  }
+
+  /* ── Nav / social links ─────────────────────────────────────── */
+  .navLabel,
+  .contactLabel {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: var(--color-text);
+    opacity: 0.35;
+    margin: 0 0 1rem;
+  }
+
+  .socialList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  /* ── Individual social link ─────────────────────────────────── */
+  .socialLink,
+  .contactLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--link-color, var(--color-primary));
+    border: 2px solid currentColor;
+    padding: 0.4rem 0.9rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    transition: background 0.15s ease, color 0.15s ease;
+    will-change: transform;
+    /* GPU layer for elastic animation */
+  }
+
+  .socialLink:hover,
+  .contactLink:hover {
+    background: var(--link-color, var(--color-primary));
+    color: var(--color-bg);
+  }
+
+  .socialAbbr {
+    font-size: 0.95em;
+    min-width: 1.6ch;
+    text-align: center;
+  }
+
+  .socialName {
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Contact column ─────────────────────────────────────────── */
+  .footerContact {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Copyright bar ──────────────────────────────────────────── */
+  .footerCopyright {
+    border-top: 1px solid rgba(248, 250, 252, 0.06);
+    padding: 1.2rem 6vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .copyrightText,
+  .copyrightStack {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+    opacity: 0.25;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .footerInner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      padding: 3rem 5vw 1.5rem;
+    }
+
+    .socialList {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footerCopyright {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+  }
+</style>

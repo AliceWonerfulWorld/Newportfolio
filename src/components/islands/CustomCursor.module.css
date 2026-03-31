@@ -1,0 +1,62 @@
+/* CustomCursor.module.css
+   クラス名は SplatCanvas.module.css と世界観を統一（ink/neon 語彙）
+*/
+
+/* ── ルートラッパー ──────────────────────────────────────────── */
+/* ゼロサイズの DOM アンカー。視覚的に何も描かない */
+.cursorRoot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: var(--z-cursor); /* 999 */
+  pointer-events: none;
+}
+
+/* ── 大きめのトレイリングリング ──────────────────────────────── */
+/* GSAP が x/y transform で位置制御。CSS は起点 (0,0) を定義するだけ */
+.inkRing {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity, border-color;
+  /* 進行方向への伸びを滑らかにする */
+  transform-origin: center center;
+}
+
+/* ── 小さな即時追従ドット ────────────────────────────────────── */
+.neonDot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* ── prefers-reduced-motion 用フォールバック ─────────────────── */
+/* GSAP アニメーションなしの静的カーソル */
+.staticCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-primary);
+  /* リング型と区別するために正方形 */
+  border-radius: 0;
+  pointer-events: none;
+  will-change: transform;
+  /* CSS transition のみ — no GSAP */
+  transition: transform 0.06s linear;
+}

@@ -1,0 +1,78 @@
+---
+import SplatCanvas from '../islands/SplatCanvas';
+---
+
+<section class="heroSection">
+  <div class="splatLayer">
+    <SplatCanvas client:load />
+  </div>
+
+  <div class="heroContent">
+    <h1 id="hero-title" class="heroTitle">DOCTOR</h1>
+    <p id="hero-subtitle" class="heroSubtitle">&gt; FULL-STACK DEV / GAME CREATOR</p>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { animateHeroEntry } from '../../utils/animations';
+
+  const titleEl = document.getElementById('hero-title');
+  const subtitleEl = document.getElementById('hero-subtitle');
+
+  if (titleEl && subtitleEl) {
+    animateHeroEntry(titleEl, subtitleEl);
+  }
+</script>
+
+<style>
+  .heroSection {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--color-bg);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 0 8vh 6vw;
+  }
+
+  .splatLayer {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-ink);
+  }
+
+  .heroContent {
+    position: relative;
+    z-index: var(--z-ui);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(6rem, 20vw, 14rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: var(--color-primary);
+    filter: drop-shadow(6px 6px 0px var(--color-secondary));
+    transform: rotate(-4deg);
+    transform-origin: left bottom;
+    opacity: 0;
+    margin: 0;
+  }
+
+  .heroSubtitle {
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: clamp(0.9rem, 2vw, 1.4rem);
+    color: var(--color-accent);
+    letter-spacing: 0.05em;
+    transform: rotate(-1.5deg) translateX(2rem);
+    transform-origin: left center;
+    opacity: 0;
+    margin: 0;
+  }
+</style>

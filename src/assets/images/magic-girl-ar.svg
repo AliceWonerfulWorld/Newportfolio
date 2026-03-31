@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <rect width="800" height="500" fill="#0F172A"/>
+  <!-- AR scan rings -->
+  <ellipse cx="400" cy="230" rx="280" ry="160" fill="none" stroke="#FF007A" stroke-width="2" stroke-dasharray="12 8" opacity="0.7"/>
+  <ellipse cx="400" cy="230" rx="200" ry="115" fill="none" stroke="#CCFF00" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"/>
+  <ellipse cx="400" cy="230" rx="120" ry="70" fill="none" stroke="#00F0FF" stroke-width="3" opacity="0.8"/>
+  <!-- Center figure silhouette -->
+  <circle cx="400" cy="155" r="38" fill="#FF007A" opacity="0.6"/>
+  <path d="M340 230 Q340 190 400 190 Q460 190 460 230 L460 310 Q460 330 440 330 L360 330 Q340 330 340 310 Z" fill="#FF007A" opacity="0.5"/>
+  <!-- Magic transformation effects -->
+  <circle cx="400" cy="155" r="50" fill="none" stroke="#CCFF00" stroke-width="3" opacity="0.9"/>
+  <circle cx="400" cy="155" r="64" fill="none" stroke="#CCFF00" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+  <!-- Sparkle rays -->
+  <line x1="400" y1="60" x2="400" y2="95" stroke="#CCFF00" stroke-width="3" opacity="0.8"/>
+  <line x1="480" y1="85" x2="460" y2="112" stroke="#CCFF00" stroke-width="3" opacity="0.8"/>
+  <line x1="505" y1="170" x2="468" y2="165" stroke="#CCFF00" stroke-width="3" opacity="0.8"/>
+  <line x1="320" y1="85" x2="340" y2="112" stroke="#FF007A" stroke-width="3" opacity="0.8"/>
+  <line x1="295" y1="170" x2="332" y2="165" stroke="#FF007A" stroke-width="3" opacity="0.8"/>
+  <!-- AR corner brackets -->
+  <path d="M80 50 L80 100 M80 50 L130 50" fill="none" stroke="#00F0FF" stroke-width="4" opacity="0.8"/>
+  <path d="M720 50 L720 100 M720 50 L670 50" fill="none" stroke="#00F0FF" stroke-width="4" opacity="0.8"/>
+  <path d="M80 430 L80 380 M80 430 L130 430" fill="none" stroke="#00F0FF" stroke-width="4" opacity="0.8"/>
+  <path d="M720 430 L720 380 M720 430 L670 430" fill="none" stroke="#00F0FF" stroke-width="4" opacity="0.8"/>
+  <!-- HUD text elements -->
+  <text x="90" y="115" font-family="monospace" font-size="11" fill="#00F0FF" opacity="0.7">TRACKING: ACTIVE</text>
+  <text x="90" y="135" font-family="monospace" font-size="11" fill="#00F0FF" opacity="0.7">MODE: TRANSFORM</text>
+  <text x="570" y="115" font-family="monospace" font-size="11" fill="#CCFF00" opacity="0.7">MANA: 100%</text>
+  <!-- Label -->
+  <text x="50" y="460" font-family="monospace" font-size="22" font-weight="900" fill="#FF007A" letter-spacing="2">魔法少女変身 WebAR</text>
+  <text x="50" y="490" font-family="monospace" font-size="14" fill="#CCFF00" opacity="0.7">Hackathon — WebAR Transformation Experience</text>
+</svg>

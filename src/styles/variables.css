@@ -1,0 +1,25 @@
+/* src/styles/variables.css */
+:root {
+  /* Colors - Splat & Neon Palette */
+  --color-bg: #0F172A;
+  --color-text: #F8FAFC;
+  --color-primary: #CCFF00; /* Neon Yellow-Green */
+  --color-secondary: #FF007A; /* Neon Pink */
+  --color-accent: #00F0FF; /* Cyan Blue */
+  
+  /* Gradation */
+  --grad-ink: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+
+  /* Spacing */
+  --space-unit: 1rem;
+
+  /* Z-index hierarchy */
+  --z-base: 1;
+  --z-ink: 10;
+  --z-ui: 20;
+  --z-cursor: 999;
+
+  /* Transition */
+  --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --transition-speed: 0.3s;
+}

@@ -6,5 +6,13 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), mdx()]
+  integrations: [react(), mdx()],
+  vite: {
+    ssr: {
+      noExternal: ['gsap'],
+    },
+    optimizeDeps: {
+      include: ['gsap'],
+    },
+  },
 });
